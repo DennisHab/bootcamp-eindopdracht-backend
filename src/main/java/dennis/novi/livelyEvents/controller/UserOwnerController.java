@@ -21,9 +21,9 @@ public class UserOwnerController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/usersOwner/userName/{userName}")
-    public ResponseEntity<Object> getUsersByUserName(@PathVariable("userName") String userName) {
-        List<UserOwner> users = userOwnerService.getUserUserNameStartsWith(userName);
+    @GetMapping(value = "/usersOwner/username/{username}")
+    public ResponseEntity<Object> getUsersByUserName(@PathVariable("username") String username) {
+        List<UserOwner> users = userOwnerService.getUserUsernameStartsWith(username);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 

@@ -14,7 +14,7 @@ public class Address {
 
     @JsonBackReference
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "username")
     private User user;
     @OneToOne
     Venue venue;

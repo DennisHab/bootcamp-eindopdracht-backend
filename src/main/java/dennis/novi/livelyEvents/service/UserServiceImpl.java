@@ -1,10 +1,14 @@
 package dennis.novi.livelyEvents.service;
 
 import dennis.novi.livelyEvents.exception.RecordNotFoundException;
+import dennis.novi.livelyEvents.exception.UsernameTakenException;
 import dennis.novi.livelyEvents.model.Authority;
 import dennis.novi.livelyEvents.model.User;
 import dennis.novi.livelyEvents.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,57 +21,63 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+
+
     @Override
     public List<User> getAllUsers(){
         return userRepository.findAll();
     }
     @Override
-    public User getUser(long id){
-        if (userRepository.existsById(id)) {
-        return userRepository.findById(id).orElse(null);
-    } else {
-       throw new RecordNotFoundException("This id doesn't exist: " + id);
-        }
+    public Optional<User> getUser(String username){
+        return userRepository.findById(username);
     }
     @Override
-    public List<User>getUserUserNameStartsWith(String userName){
-        return userRepository.findAllByUserNameStartingWith(userName);
+    public List<User>getUserUsernameStartsWith(String username){
+        return userRepository.findAllByUsernameStartingWith(username);
     }
     @Override
-    public Optional<User> getUserByUsername(String userName) {
-        if (userRepository.existsByUserName(userName)) {
-            return userRepository.findUserByUserName(userName);
+    public Optional<User> getUserByUsername(String username) {
+        if (userRepository.existsById(username)) {
+            return userRepository.findById(username);
         } else {
             throw new RecordNotFoundException("No user with this username");
         }
     }
     @Override
     public void save(User user){
-        userRepository.save(user);
+        if (!userRepository.existsById(user.getUsername())) {
+        userRepository.save(user);}
+        else {
+            throw new UsernameTakenException("The following username already exists, please choose another one:" + user.getUsername());
+        }
 
     }
     @Override
-    public void deleteById(long id) {
-        if (userRepository.existsById(id)) {
-        userRepository.deleteById(id);}
+    public Boolean userExists(String username) {
+        return userRepository.existsById(username);
+    }
+    @Override
+    public void deleteById(String username) {
+        if (userRepository.existsById(username)) {
+        userRepository.deleteById(username);}
         else {
-            throw new RecordNotFoundException("The following user can't be deleted because it doesnt exist. User ID :" + id);
+            throw new RecordNotFoundException("The following user can't be deleted because it doesnt exist. username :" + username);
         }
     }
     @Override
-    public Set<Authority> getAuthorities(long id) {
-        if(userRepository.existsById(id)) {
-            User user = userRepository.findUserById(id);
+    public Set<Authority> getAuthorities(String username) {
+        if(userRepository.existsById(username)) {
+            User user = userRepository.findById(username).get();
             return user.getAuthorities();
         } else {
             throw new RecordNotFoundException("This user doesn't exist.");
         }
     }
     @Override
-    public void addAuthority(String userName, String authority) {
-        if(userRepository.existsByUserName(userName)) {
-            User user = userRepository.findUserByUserName(userName).get();
-            user.addAuthority(new Authority(userName, authority));
+    public void addAuthority(String username, String authority) {
+        if(userRepository.existsById(username)) {
+            User user = userRepository.findById(username).get();
+            user.addAuthority(new Authority(username, authority));
             userRepository.save(user);
         } else {
             throw new RecordNotFoundException();

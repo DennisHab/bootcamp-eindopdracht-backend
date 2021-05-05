@@ -2,21 +2,21 @@ package dennis.novi.livelyEvents.payload;
 
 public class AuthenticationRequest {
 
-    private String userName;
+    private String username;
     private String password;
 
     public AuthenticationRequest() {
     }
     public AuthenticationRequest(String username, String password) {
-        this.userName = username;
+        this.username = username;
         this.password = password;
     }
 
     public String getUsername() {
-        return userName;
+        return username;
     }
-    public void setUsername(String username) {
-        this.userName = username;
+    public void setUsername(String userName) {
+        this.username = userName;
     }
     public String getPassword() {
         return password;

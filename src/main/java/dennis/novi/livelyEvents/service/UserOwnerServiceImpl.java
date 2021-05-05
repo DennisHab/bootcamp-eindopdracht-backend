@@ -27,8 +27,8 @@ public class UserOwnerServiceImpl implements UserOwnerService {
         }
     }
     @Override
-    public List<UserOwner>getUserUserNameStartsWith(String userName){
-        return userOwnerRepository.findAllByUserNameStartingWith(userName);
+    public List<UserOwner>getUserUsernameStartsWith(String username){
+        return userOwnerRepository.findAllByUsernameStartingWith(username);
 
     }
     @Override

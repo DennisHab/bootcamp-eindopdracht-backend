@@ -10,13 +10,14 @@ import java.util.Set;
 
 public interface UserService {
     List<User> getAllUsers();
-    User getUser(long id);
-    List<User>getUserUserNameStartsWith(String userName);
+    Optional<User> getUser(String username);
+    List<User>getUserUsernameStartsWith(String username);
     void save(User user);
-    void deleteById(long id);
-    Optional<User> getUserByUsername(String userName);
-    Set<Authority> getAuthorities (long id);
-    void addAuthority(String userName, String authority);
+    void deleteById(String username);
+    Optional<User> getUserByUsername(String username);
+    Set<Authority> getAuthorities (String username);
+    void addAuthority(String username, String authority);
+    Boolean userExists(String username);
 
 
 }

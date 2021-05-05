@@ -7,9 +7,12 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface UserRepository extends JpaRepository<User, Long> {
-    List<User> findAllByUserNameStartingWith(String title);
-    User findUserById(Long id);
-    Boolean existsByUserName (String userName);
+public interface UserRepository extends JpaRepository<User, String> {
+    List<User> findAllByUsernameStartingWith(String title);
+
+
+    /*Optional<User> findById(String userName);*/
+    /*Boolean existsById (String userName);
     Optional<User> findUserByUserName (String userName);
+    Void deleteById (String userName);*/
 }

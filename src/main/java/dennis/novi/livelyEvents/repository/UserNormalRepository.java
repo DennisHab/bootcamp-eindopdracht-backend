@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface UserNormalRepository extends JpaRepository<UserNormal, Long> {
-    List<UserNormal> findAllByUserNameStartingWith(String title);
+public interface UserNormalRepository extends JpaRepository<UserNormal, String> {
+    List<UserNormal> findAllByUsernameStartingWith(String title);
 }

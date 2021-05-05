@@ -44,14 +44,14 @@ public class AddressController {
         return new ResponseEntity<>("Address Created", HttpStatus.CREATED);
     }
 
-    @GetMapping(value="/users/{userId}/addresses")
-    public ResponseEntity<Object> getUserAddress(@PathVariable Long userId) {
-        return new ResponseEntity<>(addressRepository.findByUserId(userId), HttpStatus.OK);
+    @GetMapping(value="/users/{username}/addresses")
+    public ResponseEntity<Object> getUserAddress(@PathVariable String username) {
+        return new ResponseEntity<>(userRepository.findById(username), HttpStatus.OK);
     }
-    @PostMapping(value= "/users/{userId}/addresses")
-    public ResponseEntity<Object> addUserAddress(@PathVariable Long userId, @RequestBody @Validated Address address) {
-       User user = userRepository.findUserById(userId);
-       if(user.getAddress() == null && user.getId() == userId && address.getUser() == null) {
+    @PostMapping(value= "/users/{username}/addresses")
+    public ResponseEntity<Object> addUserAddress(@PathVariable String username, @RequestBody @Validated Address address) {
+       User user = userRepository.findById(username).get();
+       if(user.getAddress() == null && user.getUsername() == username && address.getUser() == null) {
        address.setUser(user);
        addressService.save(address);
        return new ResponseEntity<>("Address Created",HttpStatus.CREATED);}

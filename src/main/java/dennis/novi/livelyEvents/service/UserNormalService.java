@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface UserNormalService {
     List<UserNormal> getAllUsers();
-    UserNormal getUser(long id);
-    List<UserNormal>getUserUserNameStartsWith(String userName);
+    UserNormal getUser(String username);
+    List<UserNormal>getUserUsernameStartsWith(String username);
     void save(UserNormal user);
-    void deleteById(long id) ;
+    void deleteById(String username) ;
 }

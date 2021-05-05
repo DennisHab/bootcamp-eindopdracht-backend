@@ -20,15 +20,15 @@ public class UserNormalController {
         List<UserNormal> users = userNormalService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-    @GetMapping(value = "/usersNormal/userName/{userName}")
-    public ResponseEntity<Object> getUsersByUserName(@PathVariable("userName") String userName) {
-        List<UserNormal> users = userNormalService.getUserUserNameStartsWith(userName);
+    @GetMapping(value = "/usersNormal/username/{username}")
+    public ResponseEntity<Object> getUsersByUsername(@PathVariable("username") String username) {
+        List<UserNormal> users = userNormalService.getUserUsernameStartsWith(username);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping(value="/usersNormal/{id}")
-    public ResponseEntity getUser(@PathVariable("id") long id) {
-        return new ResponseEntity<>(userNormalService.getUser(id), HttpStatus.OK);
+    @GetMapping(value="/usersNormal/{username}")
+    public ResponseEntity getUser(@PathVariable("username") String username) {
+        return new ResponseEntity<>(userNormalService.getUser(username), HttpStatus.OK);
     }
 
     @PostMapping(value= "/usersNormal")
@@ -37,9 +37,9 @@ public class UserNormalController {
         return new ResponseEntity<>("User Created", HttpStatus.CREATED);
     }
 
-    @DeleteMapping(value="/usersNormal/{id}")
-    public ResponseEntity<Object> deleteUser(@PathVariable("id") long id) {
-        userNormalService.deleteById(id);
+    @DeleteMapping(value="/usersNormal/{username}")
+    public ResponseEntity<Object> deleteUser(@PathVariable("id") String username) {
+        userNormalService.deleteById(username);
         return new ResponseEntity<>("User deleted", HttpStatus.OK);
     }
 }

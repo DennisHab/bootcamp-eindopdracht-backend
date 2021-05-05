@@ -19,16 +19,16 @@ public class UserNormalServiceImpl implements UserNormalService {
         return userNormalRepository.findAll();
     }
     @Override
-    public UserNormal getUser(long id){
-        if (userNormalRepository.existsById(id)) {
-            return userNormalRepository.findById(id).orElse(null);
+    public UserNormal getUser(String username){
+        if (userNormalRepository.existsById(username)) {
+            return userNormalRepository.findById(username).orElse(null);
         } else {
-            throw new RecordNotFoundException("This id doesn't exist: " + id);
+            throw new RecordNotFoundException("This id doesn't exist: " + username);
         }
     }
     @Override
-    public List<UserNormal>getUserUserNameStartsWith(String userName){
-        return userNormalRepository.findAllByUserNameStartingWith(userName);
+    public List<UserNormal>getUserUsernameStartsWith(String username){
+        return userNormalRepository.findAllByUsernameStartingWith(username);
 
     }
     @Override
@@ -37,11 +37,11 @@ public class UserNormalServiceImpl implements UserNormalService {
 
     }
     @Override
-    public void deleteById(long id) {
-        if (userNormalRepository.existsById(id)) {
-            userNormalRepository.deleteById(id);}
+    public void deleteById(String username) {
+        if (userNormalRepository.existsById(username)) {
+            userNormalRepository.deleteById(username);}
         else {
-            throw new RecordNotFoundException("The following ID can't be deleted because it doesnt exist. ID :" + id);
+            throw new RecordNotFoundException("The following ID can't be deleted because it doesnt exist. ID :" + username);
         }
     }
 }

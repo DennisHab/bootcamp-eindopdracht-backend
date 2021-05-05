@@ -14,21 +14,17 @@ import java.util.Set;
 public class User {
 
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "user_id")
-    private long id;
-
     @Id
     @Column(length = 50, unique = true, nullable = false)
-    private String userName;
+    private String username;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(length = 50, nullable = false)
+    @Column(length = 50)
     private String firstName;
 
-    @Column(length = 50, nullable = false)
+    @Column(length = 50)
     private String lastName;
 
     @Column(nullable = false)
@@ -36,7 +32,7 @@ public class User {
 
     @OneToMany(
             targetEntity = dennis.novi.livelyEvents.model.Authority.class,
-            mappedBy = "userName",
+            mappedBy = "username",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER)
@@ -46,7 +42,7 @@ public class User {
     @Column(length= 10)
     private String dateOfBirth;
 
-    @Column(length = 300, nullable = false)
+    @Column(length = 300)
     private String emailAddress;
 
     @JsonManagedReference
@@ -66,20 +62,12 @@ public class User {
         this.address = address;
     }
 
-    public long getId() {
-        return id;
+    public String getUsername() {
+        return username;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
