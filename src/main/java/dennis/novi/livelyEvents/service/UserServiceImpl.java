@@ -4,7 +4,9 @@ import dennis.novi.livelyEvents.exception.RecordNotFoundException;
 import dennis.novi.livelyEvents.exception.UsernameTakenException;
 import dennis.novi.livelyEvents.model.Authority;
 import dennis.novi.livelyEvents.model.User;
+import dennis.novi.livelyEvents.model.Venue;
 import dennis.novi.livelyEvents.repository.UserRepository;
+import dennis.novi.livelyEvents.repository.VenueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,8 +22,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<User> getAllUsers(){
@@ -46,11 +48,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public void save(User user){
         if (!userRepository.existsById(user.getUsername())) {
-        userRepository.save(user);}
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(user);}
         else {
             throw new UsernameTakenException("The following username already exists, please choose another one:" + user.getUsername());
         }
 
+    }
+    @Override
+    public void updateUser(String username, User newUser){
+        if (!userRepository.existsById(username)) throw new RecordNotFoundException();
+        User user = userRepository.findById(username).get();
+        user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        user.setFirstName(newUser.getFirstName());
+        user.setLastName(newUser.getLastName());
+        user.setEmailAddress(newUser.getEmailAddress());
+        user.setDateOfBirth(newUser.getDateOfBirth());
+        user.setEnabled(newUser.isEnabled());
+        userRepository.save(user);
     }
     @Override
     public Boolean userExists(String username) {
@@ -83,6 +98,4 @@ public class UserServiceImpl implements UserService {
             throw new RecordNotFoundException();
         }
     }
-
-
 }

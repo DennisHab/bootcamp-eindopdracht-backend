@@ -34,8 +34,13 @@ public class UserNormalServiceImpl implements UserNormalService {
     @Override
     public void save(UserNormal user){
         userNormalRepository.save(user);
-
     }
+   /* @Override
+    public UserNormal calculateRating(UserNormal userNormal) {
+        double userRating = userNormal.getRating();
+
+    }*/
+
     @Override
     public void deleteById(String username) {
         if (userNormalRepository.existsById(username)) {

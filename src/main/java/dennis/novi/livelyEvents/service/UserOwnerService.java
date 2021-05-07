@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface UserOwnerService {
     List<UserOwner> getAllUsers();
-    UserOwner getUser(long id);
+    UserOwner getUser(String username);
     List<UserOwner>getUserUsernameStartsWith(String username);
     void save(UserOwner user);
-    void deleteById(long id) ;
+    void deleteById(String username) ;
 }

@@ -1,4 +1,6 @@
 package dennis.novi.livelyEvents.model;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jetbrains.annotations.Range;
 import javax.persistence.*;
 import java.util.List;
@@ -24,11 +26,39 @@ public class Venue {
     @Range(from = 1, to = 10)
     private double rating = 6;
 
+    @JsonIgnore
     @ManyToOne
+    @JoinColumn(name = "username")
     private UserOwner userOwner;
 
-    @OneToOne
+    @OneToMany
+    private List<Review> reviews;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    /*@JsonBackReference*/
+    @JoinColumn(name = "address_id")
     Address address;
+
+
+    public Venue(){
+
+    }
+    public Venue(long id, String venueName, int capacity, List<String> priceList, @Range(from = 1, to = 10) double rating, UserOwner userOwner, List<Review> reviews, Address address) {
+        this.id = id;
+        this.venueName = venueName;
+        this.capacity = capacity;
+        this.priceList = priceList;
+        this.rating = rating;
+        this.userOwner = userOwner;
+        this.reviews = reviews;
+        this.address = address;
+    }
+
+
+
+    public Venue(List<Review> reviews) {
+        this.reviews = reviews;
+    }
 
     public Address getAddress() {
         return address;

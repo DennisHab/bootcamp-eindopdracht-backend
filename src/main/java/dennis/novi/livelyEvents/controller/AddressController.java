@@ -2,8 +2,10 @@ package dennis.novi.livelyEvents.controller;
 import dennis.novi.livelyEvents.exception.RecordNotFoundException;
 import dennis.novi.livelyEvents.model.User;
 import dennis.novi.livelyEvents.model.Address;
+import dennis.novi.livelyEvents.model.Venue;
 import dennis.novi.livelyEvents.repository.UserRepository;
 import dennis.novi.livelyEvents.repository.AddressRepository;
+import dennis.novi.livelyEvents.repository.VenueRepository;
 import dennis.novi.livelyEvents.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,9 +20,9 @@ public class AddressController {
     @Autowired
     private AddressService addressService;
     @Autowired
-    private AddressRepository addressRepository;
-    @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private VenueRepository venueRepository;
 
     @GetMapping(value = "/addresses")
     public ResponseEntity<Object> getAddresses() {
@@ -59,11 +61,23 @@ public class AddressController {
             throw new RecordNotFoundException("Either the ID requested doesn't exist or this user already has an address");
        }
     }
-
     @DeleteMapping(value="/addresses/{id}")
     public ResponseEntity<Object> deleteAddress(@PathVariable("id") long id) {
         addressService.deleteById(id);
         return new ResponseEntity<>("Address deleted", HttpStatus.OK);
+    }
+
+    @PostMapping(value= "/venues/{id}/address")
+    public ResponseEntity<Object> addVenueAddress(@PathVariable Long id, @RequestBody @Validated Address address) {
+        Venue venue = venueRepository.findById(id).get();
+        if(venue.getAddress() == null && venue.getId() == id && address.getUser() == null) {
+            address.setVenue(venue);
+            venue.setAddress(address);
+            addressService.save(address);
+            return new ResponseEntity<>("Address Created",HttpStatus.CREATED);}
+        else {
+            throw new RecordNotFoundException("Either the ID requested doesn't exist or this venue already has an address");
+        }
     }
 
 }

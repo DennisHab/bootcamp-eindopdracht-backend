@@ -1,6 +1,7 @@
 package dennis.novi.livelyEvents.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
@@ -12,12 +13,16 @@ public class Address {
     @Column
     private Long Id;
 
-    @JsonBackReference
+   /* @JsonBackReference*/
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "username")
     private User user;
+
     @OneToOne
-    Venue venue;
+    @JsonIgnore
+    @JoinColumn(name = "venue_id")
+    private Venue venue;
     @Column
     private String streetName;
     @Column
@@ -103,8 +108,5 @@ public class Address {
     public void setCountry(String country) {
         this.country = country;
     }
-
-
-
 
 }

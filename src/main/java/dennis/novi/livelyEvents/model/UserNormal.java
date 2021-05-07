@@ -12,6 +12,9 @@ public class UserNormal extends User {
     @ElementCollection
     private List<String> favouredEvents;
 
+    @OneToMany
+    List<Review> reviews;
+
     @Column
     @Range(from = 1, to = 10)
     private double rating;

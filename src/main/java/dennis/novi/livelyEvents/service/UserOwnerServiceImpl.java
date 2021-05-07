@@ -19,11 +19,11 @@ public class UserOwnerServiceImpl implements UserOwnerService {
         return userOwnerRepository.findAll();
     }
     @Override
-    public UserOwner getUser(long id){
-        if (userOwnerRepository.existsById(id)) {
-            return userOwnerRepository.findById(id).orElse(null);
+    public UserOwner getUser(String username){
+        if (userOwnerRepository.existsById(username)) {
+            return userOwnerRepository.findById(username).orElse(null);
         } else {
-            throw new RecordNotFoundException("This id doesn't exist: " + id);
+            throw new RecordNotFoundException("This user doesn't exist: " + username);
         }
     }
     @Override
@@ -37,11 +37,11 @@ public class UserOwnerServiceImpl implements UserOwnerService {
 
     }
     @Override
-    public void deleteById(long id) {
-        if (userOwnerRepository.existsById(id)) {
-            userOwnerRepository.deleteById(id);}
+    public void deleteById(String username) {
+        if (userOwnerRepository.existsById(username)) {
+            userOwnerRepository.deleteById(username);}
         else {
-            throw new RecordNotFoundException("The following ID can't be deleted because it doesnt exist. ID :" + id);
+            throw new RecordNotFoundException("The following user can't be deleted because it doesnt exist:" + username);
         }
     }
 }

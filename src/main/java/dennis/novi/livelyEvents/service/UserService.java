@@ -2,6 +2,7 @@ package dennis.novi.livelyEvents.service;
 
 import dennis.novi.livelyEvents.model.Authority;
 import dennis.novi.livelyEvents.model.User;
+import dennis.novi.livelyEvents.model.Venue;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,8 @@ public interface UserService {
     Set<Authority> getAuthorities (String username);
     void addAuthority(String username, String authority);
     Boolean userExists(String username);
+    void updateUser(String username, User user);
+
 
 
 }

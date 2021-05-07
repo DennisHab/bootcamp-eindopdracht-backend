@@ -45,7 +45,7 @@ public class User {
     @Column(length = 300)
     private String emailAddress;
 
-    @JsonManagedReference
+
     @OneToOne(mappedBy = "user", cascade=CascadeType.ALL )
     @JoinColumn(name = "address_id")
     private Address address;
