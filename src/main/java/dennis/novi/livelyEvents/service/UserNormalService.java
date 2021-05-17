@@ -10,4 +10,6 @@ public interface UserNormalService {
     List<UserNormal>getUserUsernameStartsWith(String username);
     void save(UserNormal user);
     void deleteById(String username) ;
+    /*List<Double> reviewRatings(UserNormal user);*/
+    Double calculateAverageRating(UserNormal user);
 }

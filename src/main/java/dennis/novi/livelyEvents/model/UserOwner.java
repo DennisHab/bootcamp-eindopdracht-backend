@@ -11,7 +11,7 @@ import java.util.List;
 @DiscriminatorValue("Owner")
 public class UserOwner extends User {
 
-    @OneToMany(mappedBy = "userOwner")
+    @OneToMany(mappedBy = "userOwner", cascade=CascadeType.ALL)
     List<Venue> venues = new ArrayList<>();
 
     @Column(length= 10)

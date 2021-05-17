@@ -55,7 +55,7 @@ public class UserController {
         }
     }
     @PutMapping(value = "users/{username}")
-    public ResponseEntity<Object> updateKlant(@PathVariable("username") String username, @RequestBody User user) {
+    public ResponseEntity<Object> updateUser(@PathVariable("username") String username, @RequestBody User user) {
         userService.updateUser(username, user);
         return ResponseEntity.noContent().build();
     }

@@ -1,5 +1,6 @@
 package dennis.novi.livelyEvents.service;
 
+import dennis.novi.livelyEvents.exception.BadRequestException;
 import dennis.novi.livelyEvents.exception.RecordNotFoundException;
 import dennis.novi.livelyEvents.exception.UsernameTakenException;
 import dennis.novi.livelyEvents.model.Authority;
@@ -47,20 +48,20 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public void save(User user){
-        if (!userRepository.existsById(user.getUsername())) {
+        if (userRepository.existsById(user.getUsername())) throw new UsernameTakenException("The following username already exists, please choose another one:" + user.getUsername());
+        if (!user.getPassword().equals(user.getRepeatedPassword())) throw new BadRequestException("Repeated password and password don't match"); {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRepeatedPassword(passwordEncoder.encode(user.getRepeatedPassword()));
             userRepository.save(user);}
-        else {
-            throw new UsernameTakenException("The following username already exists, please choose another one:" + user.getUsername());
         }
 
-    }
     @Override
     public void updateUser(String username, User newUser){
         if (!userRepository.existsById(username)) throw new RecordNotFoundException();
         User user = userRepository.findById(username).get();
         user.setPassword(passwordEncoder.encode(newUser.getPassword()));
         user.setFirstName(newUser.getFirstName());
+        user.setRepeatedPassword(newUser.getRepeatedPassword());
         user.setLastName(newUser.getLastName());
         user.setEmailAddress(newUser.getEmailAddress());
         user.setDateOfBirth(newUser.getDateOfBirth());

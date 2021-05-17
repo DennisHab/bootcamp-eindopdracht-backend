@@ -1,9 +1,12 @@
 package dennis.novi.livelyEvents.service;
 
+import dennis.novi.livelyEvents.exception.BadRequestException;
 import dennis.novi.livelyEvents.exception.RecordNotFoundException;
+import dennis.novi.livelyEvents.exception.UsernameTakenException;
 import dennis.novi.livelyEvents.model.UserOwner;
 import dennis.novi.livelyEvents.repository.UserOwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +16,8 @@ public class UserOwnerServiceImpl implements UserOwnerService {
 
     @Autowired
     private UserOwnerRepository userOwnerRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<UserOwner> getAllUsers(){
@@ -33,8 +38,13 @@ public class UserOwnerServiceImpl implements UserOwnerService {
     }
     @Override
     public void save(UserOwner user){
-        userOwnerRepository.save(user);
-
+        if (userOwnerRepository.existsById(user.getUsername())) throw new UsernameTakenException("The following username already exists, please choose another one:" + user.getUsername());
+        if (user.getPassword().equals(user.getRepeatedPassword())) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRepeatedPassword(passwordEncoder.encode(user.getRepeatedPassword()));
+            userOwnerRepository.save(user);} else {
+            throw new BadRequestException("Repeated password and password don't match");
+        }
     }
     @Override
     public void deleteById(String username) {

@@ -15,8 +15,7 @@ public class UserOwnerController {
 
     @Autowired
     private UserOwnerService userOwnerService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
 
     @GetMapping(value = "/usersOwner")
     public ResponseEntity<Object> getUsers() {
@@ -37,7 +36,6 @@ public class UserOwnerController {
 
     @PostMapping(value = "/usersOwner")
     public ResponseEntity<Object> createUser(@RequestBody UserOwner user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userOwnerService.save(user);
         return new ResponseEntity<>("User Created", HttpStatus.CREATED);
     }

@@ -46,10 +46,12 @@ public class VenueController {
         venueService.save(venue);
         return new ResponseEntity<>("Venue created", HttpStatus.CREATED);
     }
-    @GetMapping(value="/usersOwner/{username}/venues")
-    public ResponseEntity<Object> getUserAddress(@PathVariable String username) {
-        return new ResponseEntity<>(userOwnerRepository.findById(username), HttpStatus.OK);
+    @GetMapping(value="/usersOwner/{username}/venues/id")
+    public ResponseEntity<Object> getUserVenuesId(@PathVariable String username) {
+        Long venueId = venueService.getUserVenueId(username);
+        return new ResponseEntity<>(venueId, HttpStatus.OK);
     }
+
 
     @PostMapping(value= "/usersOwner/{username}/venues")
     public ResponseEntity<Object> addUserVenue(@PathVariable String username, @RequestBody @Validated Venue venue) {

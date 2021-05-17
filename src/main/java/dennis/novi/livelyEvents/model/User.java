@@ -21,6 +21,11 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+
+
+    @Column(nullable = false)
+    private String repeatedPassword;
+
     @Column(length = 50)
     private String firstName;
 
@@ -49,6 +54,8 @@ public class User {
     @OneToOne(mappedBy = "user", cascade=CascadeType.ALL )
     @JoinColumn(name = "address_id")
     private Address address;
+
+
 
     public User() {
 
@@ -128,5 +135,13 @@ public class User {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getRepeatedPassword() {
+        return repeatedPassword;
+    }
+
+    public void setRepeatedPassword(String repeatedPassword) {
+        this.repeatedPassword = repeatedPassword;
     }
 }

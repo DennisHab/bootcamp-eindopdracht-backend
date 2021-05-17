@@ -31,10 +31,10 @@ public class Venue {
     @JoinColumn(name = "username")
     private UserOwner userOwner;
 
-    @OneToMany
+    @OneToMany(mappedBy = "venue")
     private List<Review> reviews;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     /*@JsonBackReference*/
     @JoinColumn(name = "address_id")
     Address address;

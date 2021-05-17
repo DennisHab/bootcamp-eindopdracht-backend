@@ -12,7 +12,7 @@ public class Event {
     @OneToOne
     Venue venue;
 
-    @OneToMany
+    @OneToMany(mappedBy = "event")
     private List<Review> reviews;
 
     @Column

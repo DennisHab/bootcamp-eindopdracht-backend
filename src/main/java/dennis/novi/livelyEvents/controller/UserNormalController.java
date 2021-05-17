@@ -20,7 +20,9 @@ public class UserNormalController {
 
     @GetMapping(value = "/usersNormal")
     public ResponseEntity<Object> getUsers() {
+
         List<UserNormal> users = userNormalService.getAllUsers();
+
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
     @GetMapping(value = "/usersNormal/username/{username}")
@@ -31,12 +33,15 @@ public class UserNormalController {
 
     @GetMapping(value="/usersNormal/{username}")
     public ResponseEntity getUser(@PathVariable("username") String username) {
-        return new ResponseEntity<>(userNormalService.getUser(username), HttpStatus.OK);
+        UserNormal user = userNormalService.getUser(username);
+        user.setRating(userNormalService.calculateAverageRating(user));
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping(value= "/usersNormal")
     public ResponseEntity<Object> createUser(@RequestBody UserNormal user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRating(userNormalService.calculateAverageRating(user));
+        /*user.setPassword(passwordEncoder.encode(user.getPassword()));*/
         userNormalService.save(user);
         return new ResponseEntity<>("User Created", HttpStatus.CREATED);
     }
