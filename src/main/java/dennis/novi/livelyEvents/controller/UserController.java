@@ -4,14 +4,18 @@ import dennis.novi.livelyEvents.exception.RecordNotFoundException;
 import dennis.novi.livelyEvents.model.User;
 import dennis.novi.livelyEvents.model.Venue;
 import dennis.novi.livelyEvents.service.UserService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -59,6 +63,12 @@ public class UserController {
         userService.updateUser(username, user);
         return ResponseEntity.noContent().build();
     }
+    @PutMapping(value = "users/{username}/changepassword")
+    public ResponseEntity<Object> updateUserPassword(@PathVariable("username") String username, @RequestBody User user) {
+        userService.updateUserPassword(username, user);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping(value="/users/{username}")
     public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {
         userService.deleteById(username);

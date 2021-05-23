@@ -12,4 +12,6 @@ public interface ReviewService {
     void deleteById(Long id);
     void updateReview(Long id, Review review);
     void updateReviewRating(Long id, Review newReview);
+    void addReviewToUserAndEvent(Long id, Review review, String username);
+    void addReviewToUserAndVenue(Long id, Review review, String username);
 }

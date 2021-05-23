@@ -48,6 +48,17 @@ public class ReviewController {
             throw new RecordNotFoundException("Either the ID requested doesn't exist or this review was already added to another user.");
         }
     }
+    @PostMapping(value = "users/{username}/reviews/event/{eventId}")
+    public ResponseEntity<Object> addReviewToUserAndEvent(@PathVariable("username") String username, @PathVariable("eventId") long id, @RequestBody Review review){
+        reviewService.addReviewToUserAndEvent(id, review, username);
+        return new ResponseEntity<>("Review added to user and event", HttpStatus.CREATED);
+    }
+    @PostMapping(value = "users/{username}/reviews/venue/{venueId}")
+    public ResponseEntity<Object> addReviewToUserAndVenue(@PathVariable("username") String username, @PathVariable("venueId") long id, @RequestBody Review review){
+        reviewService.addReviewToUserAndVenue(id, review, username);
+        return new ResponseEntity<>("Review added to user and venue", HttpStatus.CREATED);
+    }
+
     @PutMapping(value = "/reviews/{id}")
     public ResponseEntity<Object> updateReview(@PathVariable("id") Long id,@RequestBody Review review) {
         reviewService.updateReview(id, review);

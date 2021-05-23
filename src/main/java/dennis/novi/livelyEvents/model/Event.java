@@ -1,6 +1,13 @@
 package dennis.novi.livelyEvents.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -9,10 +16,14 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+
+    @JsonIgnoreProperties({"events", "image","reviews"})
+    @JoinColumn(name ="venue_id")
+    @ManyToOne
     Venue venue;
 
     @OneToMany(mappedBy = "event")
+    @JsonIgnoreProperties("event")
     private List<Review> reviews;
 
     @Column
@@ -21,17 +32,29 @@ public class Event {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, length = 10)
-    private String date;
+    @Column(nullable = false)
+    @JsonFormat(pattern= "dd-MM-yyyy")
+    private Date date;
 
-    @Column(nullable = false, length = 5)
+
+    @Column(nullable = false)
+    @JsonFormat(pattern="HH:mm")
     private String time;
+
+    @Column
+    private double rating;
 
     @Column
     private boolean ticketRequired;
 
+    @ElementCollection
+    private List<String> images;
+
     @Column
     private String eventDescription;
+
+    public Event() {
+    }
 
     public Long getId() {
         return id;
@@ -39,6 +62,14 @@ public class Event {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 
     public Venue getVenue() {
@@ -73,16 +104,24 @@ public class Event {
         this.name = name;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
     public String getTime() {
         return time;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 
     public void setTime(String time) {
@@ -104,8 +143,5 @@ public class Event {
     public void setEventDescription(String eventDescription) {
         this.eventDescription = eventDescription;
     }
-
-
-
 
 }

@@ -49,11 +49,11 @@ public class UserNormalServiceImpl implements UserNormalService {
     public void save(UserNormal user){
         if (userNormalRepository.existsById(user.getUsername())) throw new UsernameTakenException("The following username already exists, please choose another one:" + user.getUsername());
         if (!user.getPassword().equals(user.getRepeatedPassword())) throw new BadRequestException("Repeated password and password don't match"); {
+            user.setRating(calculateAverageRating(user));
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setRepeatedPassword(passwordEncoder.encode(user.getRepeatedPassword()));
             userNormalRepository.save(user);}
         }
-
 
     @Override
     public void deleteById(String username) {

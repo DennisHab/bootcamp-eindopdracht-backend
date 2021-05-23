@@ -20,7 +20,5 @@ public interface UserService {
     void addAuthority(String username, String authority);
     Boolean userExists(String username);
     void updateUser(String username, User user);
-
-
-
+    void updateUserPassword(String username, User newUser);
 }

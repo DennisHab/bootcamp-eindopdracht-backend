@@ -55,10 +55,13 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);}
         }
 
+
+
     @Override
     public void updateUser(String username, User newUser){
         if (!userRepository.existsById(username)) throw new RecordNotFoundException();
         User user = userRepository.findById(username).get();
+        if(!newUser.getRepeatedPassword().equals(newUser.getPassword())) throw new BadRequestException("Password doesn't match.");
         user.setPassword(passwordEncoder.encode(newUser.getPassword()));
         user.setFirstName(newUser.getFirstName());
         user.setRepeatedPassword(newUser.getRepeatedPassword());
@@ -67,6 +70,27 @@ public class UserServiceImpl implements UserService {
         user.setDateOfBirth(newUser.getDateOfBirth());
         user.setEnabled(newUser.isEnabled());
         userRepository.save(user);
+    }
+    @Override
+    public void updateUserPassword(String username, User newUser){
+        if (!userRepository.existsById(username)){ throw new RecordNotFoundException();}else{
+        User user = userRepository.findById(username).get();
+        String oldPassword = user.getPassword();
+        String validateOldPassword = newUser.getPasswordValidation();
+        boolean match = passwordEncoder.matches(validateOldPassword, oldPassword);
+        if (!match) throw new BadRequestException("Old password is incorrect");
+        else if(!newUser.getRepeatedPassword().equals(newUser.getPassword())) throw new BadRequestException("Password doesn't match.");
+        user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        user.setRepeatedPassword(passwordEncoder.encode(newUser.getRepeatedPassword()));
+        user.setFirstName(user.getFirstName());
+        user.setLastName(user.getLastName());
+        user.setEmailAddress(user.getEmailAddress());
+        user.setDateOfBirth(user.getDateOfBirth());
+        user.setEnabled(user.isEnabled());
+        user.setAddress(user.getAddress());
+        user.setDateOfBirth(user.getDateOfBirth());
+
+        userRepository.save(user);}
     }
     @Override
     public Boolean userExists(String username) {

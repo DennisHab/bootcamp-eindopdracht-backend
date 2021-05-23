@@ -40,8 +40,6 @@ public class UserNormalController {
 
     @PostMapping(value= "/usersNormal")
     public ResponseEntity<Object> createUser(@RequestBody UserNormal user) {
-        user.setRating(userNormalService.calculateAverageRating(user));
-        /*user.setPassword(passwordEncoder.encode(user.getPassword()));*/
         userNormalService.save(user);
         return new ResponseEntity<>("User Created", HttpStatus.CREATED);
     }

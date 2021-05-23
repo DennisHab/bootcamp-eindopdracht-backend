@@ -38,6 +38,8 @@ public class VenueController {
 
     @GetMapping(value= "/venues/{id}")
     public ResponseEntity<Object> getVenue(@PathVariable("id") Long id) {
+        Venue venue = venueService.getVenue(id);
+        venue.setRating(venueService.calculateAverageRating(venue));
         return new ResponseEntity<>(venueService.getVenue(id), HttpStatus.OK);
     }
 
@@ -59,6 +61,7 @@ public class VenueController {
         if(userOwner.getUsername() == username && venue.getUserOwner() == null) {
             List<Venue> userOwnerVenues = userOwner.getVenueList();
             userOwnerVenues.add(venue);
+            venue.setRating(venueService.calculateAverageRating(venue));
             venue.setUserOwner(userOwner);
             venueService.save(venue);
             return new ResponseEntity<>("Venue Created",HttpStatus.CREATED);}

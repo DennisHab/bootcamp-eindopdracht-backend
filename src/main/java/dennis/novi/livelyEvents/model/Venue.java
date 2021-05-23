@@ -1,6 +1,8 @@
 package dennis.novi.livelyEvents.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.jetbrains.annotations.Range;
 import javax.persistence.*;
 import java.util.List;
@@ -19,12 +21,12 @@ public class Venue {
     @Column
     private int capacity;
 
-    @ElementCollection
-    private List<String> priceList;
+    @Column(length = 1000)
+    private String image;
 
     @Column
     @Range(from = 1, to = 10)
-    private double rating = 6;
+    private double rating;
 
     @JsonIgnore
     @ManyToOne
@@ -34,27 +36,88 @@ public class Venue {
     @OneToMany(mappedBy = "venue")
     private List<Review> reviews;
 
+    @Column
+    private String facebook;
+
+    @Column
+    private String instagram;
+
+    @Column
+    private String twitter;
+
+    @Column
+    private String website;
+
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "venue")
+    @JsonIgnoreProperties("reviews")
+    private List<Event> events;
+
     @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    /*@JsonBackReference*/
     @JoinColumn(name = "address_id")
     Address address;
-
 
     public Venue(){
 
     }
-    public Venue(long id, String venueName, int capacity, List<String> priceList, @Range(from = 1, to = 10) double rating, UserOwner userOwner, List<Review> reviews, Address address) {
+    public Venue(long id, String venueName, int capacity, @Range(from = 1, to = 10) double rating, UserOwner userOwner, List<Review> reviews, Address address, String image) {
         this.id = id;
         this.venueName = venueName;
         this.capacity = capacity;
-        this.priceList = priceList;
         this.rating = rating;
         this.userOwner = userOwner;
         this.reviews = reviews;
         this.address = address;
+        this.image = image;
     }
 
+    public String getFacebook() {
+        return facebook;
+    }
 
+    public void setFacebook(String facebook) {
+        this.facebook = facebook;
+    }
+
+    public String getInstagram() {
+        return instagram;
+    }
+
+    public void setInstagram(String instagram) {
+        this.instagram = instagram;
+    }
+
+    public String getTwitter() {
+        return twitter;
+    }
+
+    public void setTwitter(String twitter) {
+        this.twitter = twitter;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
 
     public Venue(List<Review> reviews) {
         this.reviews = reviews;
@@ -93,14 +156,6 @@ public class Venue {
         this.capacity = capacity;
     }
 
-    public List<String> getPriceList() {
-        return priceList;
-    }
-
-    public void setPriceList(List<String> priceList) {
-        this.priceList = priceList;
-    }
-
     public double getRating() {
         return rating;
     }
@@ -115,5 +170,13 @@ public class Venue {
 
     public void setUserOwner(UserOwner userOwner) {
         this.userOwner = userOwner;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
     }
 }

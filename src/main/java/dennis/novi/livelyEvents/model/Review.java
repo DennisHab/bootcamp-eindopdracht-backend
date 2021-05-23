@@ -1,6 +1,9 @@
 package dennis.novi.livelyEvents.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 
@@ -12,19 +15,24 @@ public class Review {
     private long id;
 
     @ManyToOne
-    @JsonIgnore
+    @JsonIgnoreProperties({"reviews", "password","repeatedPassword","firstName","lastName","authorities","dateOfBirth","emailAddress","address","enabled","passwordValidation"})
+    @JoinColumn(name ="username")
     UserNormal userNormal;
 
     @ManyToOne
-    @JsonIgnore
+    @JsonIgnoreProperties("reviews")
     Event event;
 
     @ManyToOne
-    @JsonIgnore
+    @JsonIgnoreProperties({"reviews", "events","image","facebook","instagram","twitter","website"})
     Venue venue;
+
 
     @Column
     private String reviewContent;
+
+    @Column
+    private double rating;
 
     @Column
     private double reviewRating = 6.0;
@@ -78,5 +86,13 @@ public class Review {
 
     public void setReviewRating(double reviewRating) {
         this.reviewRating = reviewRating;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 }

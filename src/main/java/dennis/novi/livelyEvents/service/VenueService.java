@@ -7,11 +7,11 @@ import java.util.Set;
 
 public interface VenueService {
     List<Venue> getAllVenues();
-    Optional<Venue> getVenue(Long id);
+    Venue getVenue(Long id);
     List<Venue>getVenueVenueNameStartsWith(String VenueName);
     void save(Venue venue);
     void deleteById(Long id);
     Optional<Venue> getVenueByVenueName(String venueName);
     Long  getUserVenueId(String username);
-
+    Double calculateAverageRating(Venue venue);
 }
