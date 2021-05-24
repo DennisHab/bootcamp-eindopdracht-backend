@@ -3,7 +3,9 @@ package dennis.novi.livelyEvents.controller;
 import dennis.novi.livelyEvents.model.Address;
 import dennis.novi.livelyEvents.model.Event;
 import dennis.novi.livelyEvents.model.Venue;
+import dennis.novi.livelyEvents.repository.EventRepository;
 import dennis.novi.livelyEvents.service.EventService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +18,20 @@ import java.util.List;
 public class EventController {
     @Autowired
     EventService eventService;
+    @Autowired
+    EventRepository eventRepository;
 
     @GetMapping(value = "/events")
     public ResponseEntity<Object> getEvents() {
         List<Event> events = eventService.getAllEvents();
+        return new ResponseEntity<>(events, HttpStatus.OK);
+    }
+    //Zoek op event naam en venue naam
+    @GetMapping(value="/events/search/{query}")
+    public ResponseEntity<Object> searchEvent(@PathVariable("query") String query){
+        List<Event> events = eventRepository.findAllByNameContainingIgnoreCase(query);
+        List<Event> eventsVenue = eventService.findEventByVenueName(query);
+        events.addAll(eventsVenue);
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 

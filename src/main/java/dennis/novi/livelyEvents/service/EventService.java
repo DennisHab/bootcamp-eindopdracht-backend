@@ -15,4 +15,5 @@ public interface EventService {
     void updateEvent(Event event, long id);
     Double calculateAverageRating(Event event);
     void addEventToVenue(Event event, long id);
+    List<Event> findEventByVenueName(String venueName);
 }

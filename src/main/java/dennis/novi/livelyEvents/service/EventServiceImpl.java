@@ -81,6 +81,21 @@ public class EventServiceImpl implements EventService {
         eventRepository.save(event);
     }
     @Override
+    public List<Event> findEventByVenueName(String venueName){
+        List<Event> events = eventRepository.findAll();
+        List<Venue> eventsVenues = new ArrayList<>();
+        List<Event> results = new ArrayList<>();
+        for (Event event : events) {
+            eventsVenues.add(event.getVenue());
+        }
+        for (Venue venue : eventsVenues) {
+            if (venue.getVenueName().contains(venueName)) {
+                results.addAll(venue.getEvents());
+            }
+        }
+        return results;
+    }
+    @Override
     public Double calculateAverageRating(Event event) {
         List<Double> eventReviewRatings = new ArrayList<>();
         if (event.getReviews() == null){
