@@ -1,10 +1,8 @@
 package dennis.novi.livelyEvents.service;
 
+import dennis.novi.livelyEvents.exception.BadRequestException;
 import dennis.novi.livelyEvents.exception.RecordNotFoundException;
-import dennis.novi.livelyEvents.model.Event;
-import dennis.novi.livelyEvents.model.Review;
-import dennis.novi.livelyEvents.model.UserOwner;
-import dennis.novi.livelyEvents.model.Venue;
+import dennis.novi.livelyEvents.model.*;
 import dennis.novi.livelyEvents.repository.UserOwnerRepository;
 import dennis.novi.livelyEvents.repository.VenueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +19,7 @@ public class VenueServiceImpl implements VenueService {
     VenueRepository venueRepository;
     @Autowired
     UserOwnerRepository userOwnerRepository;
+
 
     @Override
     public List<Venue> getAllVenues() {
@@ -48,6 +47,7 @@ public class VenueServiceImpl implements VenueService {
     @Override
     public void save(Venue venue) {
         venue.setRating(calculateAverageRating(venue));
+
         venueRepository.save(venue);
     }
     @Override
@@ -73,6 +73,36 @@ public class VenueServiceImpl implements VenueService {
     } return venueId;}
 
     @Override
+    public List<Venue> findVenueByCityName(String cityName){
+        List<Venue> venues = venueRepository.findAll();
+        List<Address> addressVenues = new ArrayList<>();
+        List<Venue> results = new ArrayList<>();
+        for (Venue venue : venues) {
+            addressVenues.add(venue.getAddress());
+        }
+        for (Address address : addressVenues) {
+            if (address.getCity().contains(cityName)) {
+                results.add(address.getVenue());
+            }
+        }
+        return results;
+    }
+    @Override
+    public void deleteUserVenueById(String username, Long id){
+        UserOwner user = userOwnerRepository.findById(username).get();
+        Venue userVenue = venueRepository.findById(id).get();
+        List<Venue> userVenues = user.getVenueList();
+        List<Long> userVenueId = new ArrayList<>();
+        for (Venue venue : userVenues) {
+            userVenueId.add(venue.getId());
+        }
+        if (userVenueId.contains(id)){
+            userVenues.remove(userVenue);
+            venueRepository.deleteById(id);
+        } else {throw new BadRequestException("Id doesn't belong to user");}
+    }
+
+    @Override
     public Double calculateAverageRating(Venue venue) {
         List<Double> venueReviewRatings = new ArrayList<>();
         if (venue.getReviews() == null){
@@ -93,4 +123,18 @@ public class VenueServiceImpl implements VenueService {
             return Math.round((totalReviewRating/totalReviews) * 10.0) / 10.0;
         }
     }
-}
+    @Override
+    public Venue addVenueToUser(Venue venue, String username){
+        UserOwner userOwner = userOwnerRepository.findById(username).get();
+        if(userOwner.getUsername() == username && venue.getUserOwner() == null) {
+            List<Venue> userOwnerVenues = userOwner.getVenueList();
+            userOwnerVenues.add(venue);
+
+            venue.setRating(calculateAverageRating(venue));
+            venue.setUserOwner(userOwner);
+            venueRepository.save(venue);
+    }   else {
+            throw new RecordNotFoundException("Either the user doesn't exist or the venue already has an owner");
+        }
+        return venue;
+    }}

@@ -1,41 +1,41 @@
 package dennis.novi.livelyEvents.controller;
 
+import dennis.novi.livelyEvents.exception.NotAuthorizedException;
 import dennis.novi.livelyEvents.exception.RecordNotFoundException;
-import dennis.novi.livelyEvents.model.Address;
-import dennis.novi.livelyEvents.model.User;
-import dennis.novi.livelyEvents.model.UserOwner;
-import dennis.novi.livelyEvents.model.Venue;
+import dennis.novi.livelyEvents.model.*;
 import dennis.novi.livelyEvents.repository.UserOwnerRepository;
 import dennis.novi.livelyEvents.repository.UserRepository;
+import dennis.novi.livelyEvents.repository.VenueRepository;
 import dennis.novi.livelyEvents.service.VenueService;
+
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", maxAge=3600)
 public class VenueController {
     @Autowired
     private VenueService venueService;
     @Autowired
     private UserOwnerRepository userOwnerRepository;
+    @Autowired
+    private VenueRepository venueRepository;
 
     @GetMapping(value="/venues")
     public ResponseEntity<Object> getVenues(){
         List<Venue> venues = venueService.getAllVenues();
         return new ResponseEntity<>(venues, HttpStatus.OK);
     }
-
-    @GetMapping(value = "/venues/venueName/{venueName}")
-    public ResponseEntity<Object> getVenuesByVenueName(@PathVariable("venueName") String venueName) {
-        List<Venue> venues = venueService.getVenueVenueNameStartsWith(venueName);
-        return new ResponseEntity<>(venues, HttpStatus.OK);
-    }
-
     @GetMapping(value= "/venues/{id}")
     public ResponseEntity<Object> getVenue(@PathVariable("id") Long id) {
         Venue venue = venueService.getVenue(id);
@@ -43,35 +43,24 @@ public class VenueController {
         return new ResponseEntity<>(venueService.getVenue(id), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/venues")
-    public ResponseEntity<Object> createVenue(@RequestBody Venue venue) {
-        venueService.save(venue);
-        return new ResponseEntity<>("Venue created", HttpStatus.CREATED);
+    @DeleteMapping(value="/userOwner/{username}/venues/{venueId}")
+    public ResponseEntity<Object> deleteUser(@PathVariable("username") String username, @PathVariable("venueId") Long id, Principal principal) {
+        if(principal.getName().equals(username)){
+            venueService.deleteUserVenueById(username, id);
+            return new ResponseEntity<>("Venue deleted", HttpStatus.OK);
+        }else throw new NotAuthorizedException("You are not authorized to make this request");
     }
-    @GetMapping(value="/usersOwner/{username}/venues/id")
-    public ResponseEntity<Object> getUserVenuesId(@PathVariable String username) {
-        Long venueId = venueService.getUserVenueId(username);
-        return new ResponseEntity<>(venueId, HttpStatus.OK);
+    @PostMapping(value= "/userOwner/{username}/venues")
+    public ResponseEntity<Object> addUserVenue(@PathVariable String username, @RequestBody @Validated Venue venue, Principal principal){
+         if(principal.getName().equals(username)){
+             venueService.addVenueToUser(venue, username);
+             return new ResponseEntity<>("Venue Created",HttpStatus.CREATED);}
+         else throw new NotAuthorizedException("You are not authorized to make this request");
     }
-
-
-    @PostMapping(value= "/usersOwner/{username}/venues")
-    public ResponseEntity<Object> addUserVenue(@PathVariable String username, @RequestBody @Validated Venue venue) {
-        UserOwner userOwner = userOwnerRepository.findById(username).get();
-        if(userOwner.getUsername() == username && venue.getUserOwner() == null) {
-            List<Venue> userOwnerVenues = userOwner.getVenueList();
-            userOwnerVenues.add(venue);
-            venue.setRating(venueService.calculateAverageRating(venue));
-            venue.setUserOwner(userOwner);
-            venueService.save(venue);
-            return new ResponseEntity<>("Venue Created",HttpStatus.CREATED);}
-        else {
-            throw new RecordNotFoundException("Either the user doesn't exist or the venue already has an owner");
-        }
     }
 
 
 
 
 
-}
+

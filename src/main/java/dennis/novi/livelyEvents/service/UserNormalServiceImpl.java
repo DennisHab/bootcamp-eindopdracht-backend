@@ -2,10 +2,14 @@ package dennis.novi.livelyEvents.service;
 import dennis.novi.livelyEvents.exception.BadRequestException;
 import dennis.novi.livelyEvents.exception.RecordNotFoundException;
 import dennis.novi.livelyEvents.exception.UsernameTakenException;
+import dennis.novi.livelyEvents.model.Event;
 import dennis.novi.livelyEvents.model.Review;
 import dennis.novi.livelyEvents.model.UserNormal;
+import dennis.novi.livelyEvents.repository.EventRepository;
 import dennis.novi.livelyEvents.repository.UserNormalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -16,6 +20,8 @@ public class UserNormalServiceImpl implements UserNormalService {
 
     @Autowired
     private UserNormalRepository userNormalRepository;
+    @Autowired
+    private EventRepository eventRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -46,13 +52,15 @@ public class UserNormalServiceImpl implements UserNormalService {
 
     }
     @Override
-    public void save(UserNormal user){
-        if (userNormalRepository.existsById(user.getUsername())) throw new UsernameTakenException("The following username already exists, please choose another one:" + user.getUsername());
+    public ResponseEntity<Object> save(UserNormal user){
+        if (userNormalRepository.existsById(user.getUsername())) throw new  UsernameTakenException("The following username already exists, please choose another one:" + user.getUsername());
         if (!user.getPassword().equals(user.getRepeatedPassword())) throw new BadRequestException("Repeated password and password don't match"); {
             user.setRating(calculateAverageRating(user));
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setRepeatedPassword(passwordEncoder.encode(user.getRepeatedPassword()));
-            userNormalRepository.save(user);}
+            userNormalRepository.save(user);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
         }
 
     @Override
@@ -84,6 +92,31 @@ public class UserNormalServiceImpl implements UserNormalService {
         int totalReviews = userTotalReviews.size();
             return Math.round((totalReviewRating/totalReviews) * 10.0) / 10.0;
         }
+    }
+    @Override
+    public void addFavouriteEvent (String username, long id) {
+        if(!userNormalRepository.existsById(username)) throw new BadRequestException("User doesn't exist");
+        UserNormal user = userNormalRepository.findById(username).get();
+        if(!eventRepository.existsById(id)) throw new BadRequestException("Event doesn't exist");
+        Event event = eventRepository.findById(id).get();
+        List<UserNormal> eventUsers = event.getUserNormal();
+        eventUsers.add(user);
+        List<Event> userEvents = user.getFavouredEvents();
+        userEvents.add(event);
+        userNormalRepository.save(user);
+    }
+    @Override
+    public void removeFavouriteEvent (String username, long id) {
+        if(!userNormalRepository.existsById(username)) throw new BadRequestException("User doesn't exist");
+        UserNormal user = userNormalRepository.findById(username).get();
+        if(!eventRepository.existsById(id)) throw new BadRequestException("Event doesn't exist");
+        Event event = eventRepository.findById(id).get();
+        List<UserNormal> eventUsers = event.getUserNormal();
+        eventUsers.remove(user);
+        List<Event> userEvents = user.getFavouredEvents();
+        if(!userEvents.contains(event)) throw new BadRequestException("Event isn't a favourite event");
+        userEvents.remove(event);
+        userNormalRepository.save(user);
     }
 }
 

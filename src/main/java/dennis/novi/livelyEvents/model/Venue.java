@@ -1,8 +1,6 @@
 package dennis.novi.livelyEvents.model;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.jetbrains.annotations.Range;
 import javax.persistence.*;
 import java.util.List;
@@ -21,7 +19,7 @@ public class Venue {
     @Column
     private int capacity;
 
-    @Column(length = 1000)
+    @Column
     private String image;
 
     @Column
@@ -33,7 +31,7 @@ public class Venue {
     @JoinColumn(name = "username")
     private UserOwner userOwner;
 
-    @OneToMany(mappedBy = "venue")
+    @OneToMany(mappedBy = "venue", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
     @Column
@@ -47,7 +45,6 @@ public class Venue {
 
     @Column
     private String website;
-
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "venue")
     @JsonIgnoreProperties("reviews")
@@ -130,7 +127,6 @@ public class Venue {
     public void setAddress(Address address) {
         this.address = address;
     }
-
 
     public long getId() {
         return id;

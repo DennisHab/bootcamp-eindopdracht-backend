@@ -1,5 +1,6 @@
 package dennis.novi.livelyEvents.controller;
 
+import dennis.novi.livelyEvents.exception.NotAuthorizedException;
 import dennis.novi.livelyEvents.exception.RecordNotFoundException;
 import dennis.novi.livelyEvents.model.Address;
 import dennis.novi.livelyEvents.model.Review;
@@ -14,9 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.print.attribute.standard.JobKOctets;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", maxAge=3600)
 public class ReviewController {
     @Autowired
     ReviewService reviewService;
@@ -32,46 +35,19 @@ public class ReviewController {
     public ResponseEntity<Object> getReview(@PathVariable("id") long id) {
         return new ResponseEntity<>(reviewService.getReview(id), HttpStatus.OK);
     }
-    @PostMapping(value = "/reviews")
-    public ResponseEntity<Object> addReview(@RequestBody Review review) {
-        reviewService.save(review);
-        return new ResponseEntity<>("Review added", HttpStatus.CREATED);
-    }
-    @PostMapping(value = "users/{username}/reviews")
-    public ResponseEntity<Object> addReviewToUser(@PathVariable("username") String username, @RequestBody Review review) {
-        UserNormal user = userNormalRepository.findById(username).get();
-        if(user.getUsername() == username && review.getUserNormal() == null) {
-            review.setUserNormal(user);
-            reviewService.save(review);
-            return new ResponseEntity<>("Review added to user.",HttpStatus.CREATED);}
-        else {
-            throw new RecordNotFoundException("Either the ID requested doesn't exist or this review was already added to another user.");
-        }
-    }
-    @PostMapping(value = "users/{username}/reviews/event/{eventId}")
-    public ResponseEntity<Object> addReviewToUserAndEvent(@PathVariable("username") String username, @PathVariable("eventId") long id, @RequestBody Review review){
+    @PostMapping(value = "user/{username}/reviews/event/{eventId}")
+    public ResponseEntity<Object> addReviewToUserAndEvent(@PathVariable("username") String username, @PathVariable("eventId") long id, @RequestBody Review review, Principal principal){
+        if(principal.getName().equals(username)){
         reviewService.addReviewToUserAndEvent(id, review, username);
-        return new ResponseEntity<>("Review added to user and event", HttpStatus.CREATED);
+        return new ResponseEntity<>("Review added to user and event", HttpStatus.CREATED);}
+        else throw new NotAuthorizedException("You are not authorized to make this request");
     }
-    @PostMapping(value = "users/{username}/reviews/venue/{venueId}")
-    public ResponseEntity<Object> addReviewToUserAndVenue(@PathVariable("username") String username, @PathVariable("venueId") long id, @RequestBody Review review){
+    @PostMapping(value = "user/{username}/reviews/venue/{venueId}")
+    public ResponseEntity<Object> addReviewToUserAndVenue(@PathVariable("username") String username, @PathVariable("venueId") long id, @RequestBody Review review, Principal principal){
+        if(principal.getName().equals(username)){
         reviewService.addReviewToUserAndVenue(id, review, username);
-        return new ResponseEntity<>("Review added to user and venue", HttpStatus.CREATED);
+        return new ResponseEntity<>("Review added to user and venue", HttpStatus.CREATED);}
+        else throw new NotAuthorizedException("You are not authorized to make this request");
     }
 
-    @PutMapping(value = "/reviews/{id}")
-    public ResponseEntity<Object> updateReview(@PathVariable("id") Long id,@RequestBody Review review) {
-        reviewService.updateReview(id, review);
-        return ResponseEntity.noContent().build();
-    }
-    @DeleteMapping(value = "/reviews/{id}")
-    public ResponseEntity<Object> deleteReview(@PathVariable("id") long id) {
-        reviewService.deleteById(id);
-        return new ResponseEntity<>("Review deleted", HttpStatus.OK);
-    }
-    @PatchMapping(value = "reviews/{id}")
-    public ResponseEntity<Object> updateReviewRating(@PathVariable("id") long id, @RequestBody Review review) {
-        reviewService.updateReviewRating(id, review);
-        return ResponseEntity.noContent().build() ;
-    }
 }

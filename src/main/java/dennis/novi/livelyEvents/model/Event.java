@@ -14,13 +14,16 @@ public class Event {
     private Long id;
 
 
+    @ManyToMany
+    @JsonIgnore
+    private List<UserNormal> userNormal;
+
     @JsonIgnoreProperties({"events", "image","reviews"})
     @JoinColumn(name ="venue_id")
     @ManyToOne
     Venue venue;
 
-    @OneToMany(mappedBy = "event")
-    @JsonIgnoreProperties("event")
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
     @Column
@@ -30,8 +33,7 @@ public class Event {
     private String name;
 
     @Column(nullable = false)
-    @JsonFormat(pattern= "dd-MM-yyyy")
-    private Date date;
+    private String date;
 
 
     @Column(nullable = false)
@@ -44,7 +46,7 @@ public class Event {
     @Column
     private boolean ticketRequired;
 
-    @Column
+    @Column(length = 1000)
     private String image;
 
     @ElementCollection
@@ -71,6 +73,15 @@ public class Event {
     public void setImages(List<String> images) {
         this.images = images;
     }
+
+    public List<UserNormal> getUserNormal() {
+        return userNormal;
+    }
+
+    public void setUserNormal(List<UserNormal> userNormal) {
+        this.userNormal = userNormal;
+    }
+
 
     public Venue getVenue() {
         return venue;
@@ -104,11 +115,11 @@ public class Event {
         this.name = name;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

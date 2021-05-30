@@ -5,6 +5,7 @@ import dennis.novi.livelyEvents.exception.RecordNotFoundException;
 import dennis.novi.livelyEvents.exception.UsernameTakenException;
 import dennis.novi.livelyEvents.model.*;
 import dennis.novi.livelyEvents.repository.EventRepository;
+import dennis.novi.livelyEvents.repository.UserOwnerRepository;
 import dennis.novi.livelyEvents.repository.VenueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ public class EventServiceImpl implements EventService {
     private EventRepository eventRepository;
     @Autowired
     private VenueRepository venueRepository;
+    @Autowired
+    private UserOwnerRepository userOwnerRepository;
 
     @Override
     public List<Event> getAllEvents(){
@@ -45,6 +48,13 @@ public class EventServiceImpl implements EventService {
     @Override
     public void save(Event event){
          {
+            String date = event.getDate();
+            String[] dateSplit = date.split("-");
+            String day = dateSplit[2];
+            String month = dateSplit[1];
+            String year = dateSplit[0];
+            String newDate = day+"-"+month+"-"+year;
+            event.setDate(newDate);
             event.setRating(calculateAverageRating(event));
             eventRepository.save(event);}
     }
@@ -60,13 +70,19 @@ public class EventServiceImpl implements EventService {
     public void updateEvent(Event newEvent, long id) {
         if (!eventRepository.existsById(id)) throw new RecordNotFoundException();
         Event event= eventRepository.findById(id).get();
+        String date = event.getDate();
+        String[] dateSplit = date.split("-");
+        String day = dateSplit[2];
+        String month = dateSplit[1];
+        String year = dateSplit[0];
+        String newDate = day+"-"+month+"-"+year;
         event.setName(newEvent.getName());
         event.setEventDescription(newEvent.getEventDescription());
         event.setTicketRequired(newEvent.isTicketRequired());
         event.setVenue(event.getVenue());
         event.setReviews(event.getReviews());
         event.setTime(newEvent.getTime());
-        event.setDate(newEvent.getDate());
+        event.setDate(newDate);
         event.setType(newEvent.getType());
         event.setRating(event.getRating());
         eventRepository.save(event);
@@ -75,10 +91,33 @@ public class EventServiceImpl implements EventService {
     public void addEventToVenue(Event event, long id) {
         Venue venue = venueRepository.getOne(id);
         List<Event> events = venue.getEvents();
+        String date = event.getDate();
+        String[] dateSplit = date.split("-");
+        String day = dateSplit[2];
+        String month = dateSplit[1];
+        String year = dateSplit[0];
+        String newDate = day+"-"+month+"-"+year;
+        event.setDate(newDate);
         events.add(event);
         event.setVenue(venue);
         event.setRating(calculateAverageRating(event));
         eventRepository.save(event);
+    }
+    @Override
+    public void deleteUserVenueById(String username, Long id, Long eventId){
+        UserOwner user = userOwnerRepository.findById(username).get();
+        Venue userVenue = venueRepository.findById(id).get();
+        Event event = eventRepository.findById(eventId).get();
+        List<Venue> userVenues = user.getVenueList();
+        List<Long> userVenueId = new ArrayList<>();
+        List<Event> userEvents = userVenue.getEvents();
+        for (Venue venue : userVenues) {
+            userVenueId.add(venue.getId());
+        }
+        if (userVenueId.contains(id)){
+            userEvents.remove(event);
+            eventRepository.deleteById(eventId);
+        } else {throw new BadRequestException("Id doesn't belong to user");}
     }
     @Override
     public List<Event> findEventByVenueName(String venueName){

@@ -1,20 +1,19 @@
 package dennis.novi.livelyEvents.controller;
 
-import dennis.novi.livelyEvents.model.Address;
+import dennis.novi.livelyEvents.exception.NotAuthorizedException;
 import dennis.novi.livelyEvents.model.Event;
-import dennis.novi.livelyEvents.model.Venue;
 import dennis.novi.livelyEvents.repository.EventRepository;
 import dennis.novi.livelyEvents.service.EventService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", maxAge=3600)
 public class EventController {
     @Autowired
     EventService eventService;
@@ -26,39 +25,22 @@ public class EventController {
         List<Event> events = eventService.getAllEvents();
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
-    //Zoek op event naam en venue naam
-    @GetMapping(value="/events/search/{query}")
-    public ResponseEntity<Object> searchEvent(@PathVariable("query") String query){
-        List<Event> events = eventRepository.findAllByNameContainingIgnoreCase(query);
-        List<Event> eventsVenue = eventService.findEventByVenueName(query);
-        events.addAll(eventsVenue);
-        return new ResponseEntity<>(events, HttpStatus.OK);
-    }
-
     @GetMapping(value="/events/{id}")
     public  ResponseEntity<Object> getEvent(@PathVariable("id") long id) {
         return new ResponseEntity<>(eventService.getEvent(id), HttpStatus.OK);
     }
-
-    @PostMapping(value= "/events")
-    public ResponseEntity<Object> createEvent(@RequestBody Event event) {
-        eventService.save(event);
-        return new ResponseEntity<>("Address Created", HttpStatus.CREATED);
-    }
-    @PostMapping(value= "/venues/{id}/events")
-    public ResponseEntity<Object> addEventToVenue(@PathVariable("id") long id, @RequestBody Event event) throws ParseException {
+    @PostMapping(value= "userOwner/{username}/venues/{id}/events")
+    public ResponseEntity<Object> addEventToOwnerVenue(@PathVariable("id") long id, @PathVariable("username") String username, @RequestBody Event event, Principal principal) {
+        if(principal.getName().equals(username)){
         eventService.addEventToVenue(event, id);
-        return new ResponseEntity<>("Event: " + event.getName() +" added to venue: " + id, HttpStatus.CREATED);
+        return new ResponseEntity<>("Event: " + event.getName() +" added to venue: " + id, HttpStatus.CREATED);}
+        else throw new NotAuthorizedException("You are not authorized to make this request");
     }
-
-    @PutMapping(value="/event/{id}")
-    public ResponseEntity<Object> updateEvent(@PathVariable("id") long id ,@RequestBody Event event) {
-        eventService.updateEvent(event, id);
-        return ResponseEntity.noContent().build();
-    }
-    @DeleteMapping(value="/event/{id}")
-    public ResponseEntity<Object> deleteEvent(@PathVariable("id") long id) {
-        eventService.deleteById(id);
-        return new ResponseEntity<>("Event deleted", HttpStatus.OK);
+    @DeleteMapping(value="/userOwner/{username}/venues/{venueId}/{eventId}")
+    public ResponseEntity<Object> deleteEventFromOwnerVenue(@PathVariable("venueId") Long id, @PathVariable("username") String username, @PathVariable("eventId") Long eventId, Principal principal) {
+        if(principal.getName().equals(username)){
+        eventService.deleteUserVenueById(username, id, eventId);
+        return new ResponseEntity<>("Event deleted", HttpStatus.OK);}
+        else throw new NotAuthorizedException("You are not authorized to make this request");
     }
 }

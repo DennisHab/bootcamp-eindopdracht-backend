@@ -10,4 +10,5 @@ public interface VenueRepository extends JpaRepository<Venue, Long> {
     List<Venue> findAllByVenueNameStartingWith(String venueName);
     Optional<Venue> findByVenueName(String venueName);
     Boolean existsVenueByVenueName(String venueName);
+
 }

@@ -15,7 +15,7 @@ public class Review {
     private long id;
 
     @ManyToOne
-    @JsonIgnoreProperties({"reviews", "password","repeatedPassword","firstName","lastName","authorities","dateOfBirth","emailAddress","address","enabled","passwordValidation"})
+    @JsonIgnoreProperties({"reviews", "password","repeatedPassword","firstName","lastName","authorities","dateOfBirth","emailAddress","address","enabled","passwordValidation","favouredEvents"})
     @JoinColumn(name ="username")
     UserNormal userNormal;
 
@@ -26,6 +26,9 @@ public class Review {
     @ManyToOne
     @JsonIgnoreProperties({"reviews", "events","image","facebook","instagram","twitter","website"})
     Venue venue;
+
+    @Column
+    private String date;
 
 
     @Column
@@ -54,6 +57,14 @@ public class Review {
 
     public void setUserNormal(UserNormal userNormal) {
         this.userNormal = userNormal;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public Event getEvent() {

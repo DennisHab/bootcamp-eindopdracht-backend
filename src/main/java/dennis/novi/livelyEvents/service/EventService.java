@@ -16,4 +16,5 @@ public interface EventService {
     Double calculateAverageRating(Event event);
     void addEventToVenue(Event event, long id);
     List<Event> findEventByVenueName(String venueName);
+    void deleteUserVenueById(String username, Long id, Long eventId);
 }

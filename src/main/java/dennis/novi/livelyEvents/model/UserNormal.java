@@ -1,21 +1,16 @@
 package dennis.novi.livelyEvents.model;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import dennis.novi.livelyEvents.service.UserNormalService;
 import org.jetbrains.annotations.Range;
-import org.springframework.beans.factory.annotation.Autowired;
-import dennis.novi.livelyEvents.utils.AverageRatingCalculator;
-
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
+
 
 @Entity
 @DiscriminatorValue("Normal")
 public class UserNormal extends User {
 
-    @ElementCollection
-    private List<String> favouredEvents;
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "userNormal")
+    private List<Event> favouredEvents;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "userNormal")
     @JsonIgnoreProperties("userNormal")
@@ -43,11 +38,11 @@ public class UserNormal extends User {
         this.reviews = reviews;
     }
 
-    public List<String> getFavouredEvents() {
+    public List<Event> getFavouredEvents() {
         return favouredEvents;
     }
 
-    public void setFavouredEvents(List<String> favouredEvents) {
+    public void setFavouredEvents(List<Event> favouredEvents) {
         this.favouredEvents = favouredEvents;
     }
 
