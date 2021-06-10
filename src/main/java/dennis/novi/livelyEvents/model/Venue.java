@@ -3,17 +3,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.jetbrains.annotations.Range;
 import javax.persistence.*;
+import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 @Entity
 public class Venue {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="venue_id")
     private long id;
 
-    @Column(length = 50, nullable = false)
+    @Column(length = 50, nullable = false, unique = true)
     private String venueName;
 
     @Column
@@ -66,6 +67,7 @@ public class Venue {
         this.reviews = reviews;
         this.address = address;
         this.image = image;
+
     }
 
     public String getFacebook() {

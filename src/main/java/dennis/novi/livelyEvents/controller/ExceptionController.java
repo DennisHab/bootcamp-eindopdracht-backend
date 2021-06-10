@@ -1,7 +1,4 @@
 package dennis.novi.livelyEvents.controller;
-
-
-import dennis.novi.livelyEvents.exception.BadRequestException;
 import dennis.novi.livelyEvents.exception.NotAuthorizedException;
 import dennis.novi.livelyEvents.exception.RecordNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -24,10 +21,5 @@ public class ExceptionController {
     public ResponseEntity<Object> exception(NotAuthorizedException exception) {
         String message = exception.getMessage();
         return new ResponseEntity<>(message, HttpStatus.UNAUTHORIZED);
-    }
-    @ExceptionHandler
-    public ResponseEntity<Object> exception(BadRequestException exception){
-        String message = exception.getMessage();
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 }

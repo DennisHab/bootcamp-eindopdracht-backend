@@ -16,8 +16,6 @@ public interface UserService {
     void save(User user);
     void deleteById(String username);
     Optional<User> getUserByUsername(String username);
-    Set<Authority> getAuthorities (String username);
-    void addAuthority(String username, String authority);
     Boolean userExists(String username);
     void updateUser(String username, User user);
     void updateUserPassword(String username, User newUser);

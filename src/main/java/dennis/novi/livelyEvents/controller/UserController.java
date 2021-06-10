@@ -38,21 +38,6 @@ public class UserController {
         return new ResponseEntity<>(userService.getUser(username), HttpStatus.OK);}
         else throw new NotAuthorizedException("You are not authorized to make this request");
     }
-    @GetMapping(value="/authorities/{username}")
-    public ResponseEntity<Object> getUserAuthorities(@PathVariable("username") String username) {
-        return ResponseEntity.ok().body(userService.getAuthorities(username));
-    }
-    @PostMapping(value = "authorities/{username}")
-    public ResponseEntity<Object> addUserAuthority(@PathVariable("username") String username, @RequestBody Map<String, Object> fields) {
-        try {
-            String authorityName = (String) fields.get("authority");
-            userService.addAuthority(username, authorityName);
-            return ResponseEntity.noContent().build();
-        }
-        catch (Exception ex) {
-            throw new RecordNotFoundException();
-        }
-    }
     @PutMapping(value = "updateUser/{username}")
     public ResponseEntity<Object> updateUser(@PathVariable("username") String username, @RequestBody User user, Principal principal) {
         if(principal.getName().equals(username)){

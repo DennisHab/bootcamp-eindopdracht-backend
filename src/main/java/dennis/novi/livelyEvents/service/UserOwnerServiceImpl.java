@@ -3,6 +3,7 @@ package dennis.novi.livelyEvents.service;
 import dennis.novi.livelyEvents.exception.BadRequestException;
 import dennis.novi.livelyEvents.exception.RecordNotFoundException;
 import dennis.novi.livelyEvents.exception.UsernameTakenException;
+import dennis.novi.livelyEvents.model.Authority;
 import dennis.novi.livelyEvents.model.UserOwner;
 import dennis.novi.livelyEvents.repository.UserOwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,10 @@ public class UserOwnerServiceImpl implements UserOwnerService {
         if (user.getPassword().equals(user.getRepeatedPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setRepeatedPassword(passwordEncoder.encode(user.getRepeatedPassword()));
+            Authority authority = new Authority();
+            authority.setUsername(user.getUsername());
+            authority.setAuthority("ROLE_USERSOWNER");
+            user.addAuthority(authority);
             userOwnerRepository.save(user);} else {
             throw new BadRequestException("Repeated password and password don't match");
         }

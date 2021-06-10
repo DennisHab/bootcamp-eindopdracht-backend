@@ -2,6 +2,7 @@ package dennis.novi.livelyEvents.service;
 import dennis.novi.livelyEvents.exception.BadRequestException;
 import dennis.novi.livelyEvents.exception.RecordNotFoundException;
 import dennis.novi.livelyEvents.exception.UsernameTakenException;
+import dennis.novi.livelyEvents.model.Authority;
 import dennis.novi.livelyEvents.model.Event;
 import dennis.novi.livelyEvents.model.Review;
 import dennis.novi.livelyEvents.model.UserNormal;
@@ -58,6 +59,10 @@ public class UserNormalServiceImpl implements UserNormalService {
             user.setRating(calculateAverageRating(user));
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setRepeatedPassword(passwordEncoder.encode(user.getRepeatedPassword()));
+            Authority authority = new Authority();
+            authority.setUsername(user.getUsername());
+            authority.setAuthority("ROLE_USERSNORMAL");
+            user.addAuthority(authority);
             userNormalRepository.save(user);
             return new ResponseEntity<>(HttpStatus.CREATED);
         }

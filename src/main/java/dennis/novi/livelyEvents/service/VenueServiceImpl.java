@@ -62,15 +62,7 @@ public class VenueServiceImpl implements VenueService {
             throw new RecordNotFoundException("This venue doesn't exist");
         }
     }
-    @Override
-    public Long getUserVenueId(String username) {
-    UserOwner user = userOwnerRepository.findById(username).get();
-    List<Venue> venues = user.getVenueList();
-    long venueId = 0;
-    for (int i = 0; i < venues.size(); i++) {
-        Venue venue = venues.get(i);
-        venueId = venue.getId();
-    } return venueId;}
+
 
     @Override
     public List<Venue> findVenueByCityName(String cityName){
@@ -126,10 +118,10 @@ public class VenueServiceImpl implements VenueService {
     @Override
     public Venue addVenueToUser(Venue venue, String username){
         UserOwner userOwner = userOwnerRepository.findById(username).get();
+        if (venueRepository.existsVenueByVenueName(venue.getVenueName())) throw new BadRequestException("VenueName is already taken, please choose another one");
         if(userOwner.getUsername() == username && venue.getUserOwner() == null) {
             List<Venue> userOwnerVenues = userOwner.getVenueList();
             userOwnerVenues.add(venue);
-
             venue.setRating(calculateAverageRating(venue));
             venue.setUserOwner(userOwner);
             venueRepository.save(venue);

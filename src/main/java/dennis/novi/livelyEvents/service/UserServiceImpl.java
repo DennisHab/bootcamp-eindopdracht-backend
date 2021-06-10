@@ -55,8 +55,6 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);}
         }
 
-
-
     @Override
     public void updateUser(String username, User newUser){
         if (!userRepository.existsById(username)) throw new RecordNotFoundException();
@@ -104,23 +102,5 @@ public class UserServiceImpl implements UserService {
             throw new RecordNotFoundException("The following user can't be deleted because it doesnt exist. username :" + username);
         }
     }
-    @Override
-    public Set<Authority> getAuthorities(String username) {
-        if(userRepository.existsById(username)) {
-            User user = userRepository.findById(username).get();
-            return user.getAuthorities();
-        } else {
-            throw new RecordNotFoundException("This user doesn't exist.");
-        }
-    }
-    @Override
-    public void addAuthority(String username, String authority) {
-        if(userRepository.existsById(username)) {
-            User user = userRepository.findById(username).get();
-            user.addAuthority(new Authority(username, authority));
-            userRepository.save(user);
-        } else {
-            throw new RecordNotFoundException();
-        }
-    }
+
 }

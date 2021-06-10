@@ -10,7 +10,6 @@ public interface VenueService {
     void save(Venue venue);
     void deleteById(Long id);
     Optional<Venue> getVenueByVenueName(String venueName);
-    Long  getUserVenueId(String username);
     Double calculateAverageRating(Venue venue);
     List<Venue> findVenueByCityName(String cityName);
     void deleteUserVenueById(String username, Long id);
