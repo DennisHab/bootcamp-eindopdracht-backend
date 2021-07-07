@@ -42,7 +42,7 @@ public class VenueController {
     }
 
     @DeleteMapping(value="/userOwner/{username}/venues/{venueId}")
-    public ResponseEntity<Object> deleteUser(@PathVariable("username") String username, @PathVariable("venueId") Long id, Principal principal) {
+    public ResponseEntity<Object> deleteVenue(@PathVariable("username") String username, @PathVariable("venueId") Long id, Principal principal) {
         if(principal.getName().equals(username)){
             venueService.deleteUserVenueById(username, id);
             return new ResponseEntity<>("Venue deleted", HttpStatus.OK);
@@ -59,7 +59,7 @@ public class VenueController {
     @PostMapping(value="{username}/venue/{venueId}/uploadimage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> addImageToVenue(@PathVariable(value= "username") String username, @PathVariable(value = "venueId") Long id, @RequestParam("file") MultipartFile file, Principal principal ){
         if (principal.getName().equals(username)){
-        fileUploadService.uploadImageToVenue(file, id);
+        venueService.uploadImageToVenue(file, id, username);
         return new ResponseEntity<>("File uploaded", HttpStatus.OK);}
         else throw new NotAuthorizedException("You are not authorized to make this request");
     }

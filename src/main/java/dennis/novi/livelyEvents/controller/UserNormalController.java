@@ -24,7 +24,6 @@ public class UserNormalController {
     @GetMapping(value="users/usersNormal/{username}")
     public ResponseEntity getUser(@PathVariable("username") String username) {
         UserNormal user = userNormalService.getUser(username);
-        user.setRating(userNormalService.calculateAverageRating(user));
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
     @PostMapping(value= "/userNormal/{username}/{eventId}")

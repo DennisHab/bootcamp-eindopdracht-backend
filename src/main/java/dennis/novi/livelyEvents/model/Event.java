@@ -13,17 +13,17 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @ManyToMany
     @JsonIgnore
     private List<UserNormal> userNormal;
 
-    @JsonIgnoreProperties({"events", "image","reviews"})
+    @JsonIgnoreProperties({"events", "image","reviews","facebook","twitter","instagram","website","rating"})
     @JoinColumn(name ="venue_id")
     @ManyToOne
     Venue venue;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"venue"})
     private List<Review> reviews;
 
     @Column
@@ -33,8 +33,8 @@ public class Event {
     private String name;
 
     @Column(nullable = false)
-    private String date;
-
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private Date date;
 
     @Column(nullable = false)
     @JsonFormat(pattern="HH:mm")
@@ -115,11 +115,11 @@ public class Event {
         this.name = name;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

@@ -13,16 +13,12 @@ import java.util.Set;
 @DiscriminatorColumn(name="user_type",
         discriminatorType = DiscriminatorType.STRING)
 public class User {
-
-
     @Id
     @Column(name="username", length = 50, unique = true, nullable = false)
     private String username;
 
-
     @Column(nullable = false)
     private String password;
-
 
     @Column(nullable = false)
     private String repeatedPassword;
@@ -54,7 +50,6 @@ public class User {
     @Column(length = 300)
     private String emailAddress;
 
-
     @OneToOne(mappedBy = "user", cascade=CascadeType.ALL )
     @JoinColumn(name = "address_id")
     private Address address;
@@ -62,20 +57,6 @@ public class User {
     public User() {
 
     }
-
-    /*public User(String username, String password, String repeatedPassword, String passwordValidation, String firstName, String lastName, boolean enabled, Set<Authority> authorities, String dateOfBirth, String emailAddress, Address address) {
-        this.username = username;
-        this.password = password;
-        this.repeatedPassword = repeatedPassword;
-        this.passwordValidation = passwordValidation;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.enabled = enabled;
-        this.authorities = authorities;
-        this.dateOfBirth = dateOfBirth;
-        this.emailAddress = emailAddress;
-        this.address = address;
-    }*/
 
     public Address getAddress() {
         return address;

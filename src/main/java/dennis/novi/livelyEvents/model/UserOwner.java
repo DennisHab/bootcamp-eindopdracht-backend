@@ -1,8 +1,4 @@
 package dennis.novi.livelyEvents.model;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,16 +10,13 @@ public class UserOwner extends User {
     @OneToMany(mappedBy = "userOwner", cascade=CascadeType.ALL, fetch = FetchType.EAGER)
     List<Venue> venues = new ArrayList<>();
 
-    @Column(length= 10)
-    private int kvkNumber;
-
     public UserOwner() {
 
     }
 
-    public UserOwner(List<Venue> venues, int kvkNumber) {
+    public UserOwner(List<Venue> venues) {
         this.venues = venues;
-        this.kvkNumber = kvkNumber;
+
     }
 
     public List<Venue> getVenueList() {

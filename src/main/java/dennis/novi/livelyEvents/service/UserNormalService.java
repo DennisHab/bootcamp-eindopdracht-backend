@@ -12,8 +12,7 @@ public interface UserNormalService {
     List<UserNormal>getUserUsernameStartsWith(String username);
     ResponseEntity<Object> save(UserNormal user);
     void deleteById(String username) ;
-    /*List<Double> reviewRatings(UserNormal user);*/
-    Double calculateAverageRating(UserNormal user);
+
     void addFavouriteEvent (String username, long id);
     void removeFavouriteEvent (String username, long id);
 }

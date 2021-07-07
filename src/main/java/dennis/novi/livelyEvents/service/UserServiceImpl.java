@@ -62,7 +62,6 @@ public class UserServiceImpl implements UserService {
         if(!newUser.getRepeatedPassword().equals(newUser.getPassword())) throw new BadRequestException("Password doesn't match.");
         user.setPassword(passwordEncoder.encode(newUser.getPassword()));
         user.setFirstName(newUser.getFirstName());
-        user.setRepeatedPassword(newUser.getRepeatedPassword());
         user.setLastName(newUser.getLastName());
         user.setEmailAddress(newUser.getEmailAddress());
         user.setDateOfBirth(newUser.getDateOfBirth());
@@ -79,7 +78,6 @@ public class UserServiceImpl implements UserService {
         if (!match) throw new BadRequestException("Old password is incorrect");
         else if(!newUser.getRepeatedPassword().equals(newUser.getPassword())) throw new BadRequestException("Password doesn't match.");
         user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        user.setRepeatedPassword(passwordEncoder.encode(newUser.getRepeatedPassword()));
         user.setFirstName(user.getFirstName());
         user.setLastName(user.getLastName());
         user.setEmailAddress(user.getEmailAddress());
@@ -87,7 +85,6 @@ public class UserServiceImpl implements UserService {
         user.setEnabled(user.isEnabled());
         user.setAddress(user.getAddress());
         user.setDateOfBirth(user.getDateOfBirth());
-
         userRepository.save(user);}
     }
     @Override

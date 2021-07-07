@@ -20,25 +20,21 @@ public class Review {
     UserNormal userNormal;
 
     @ManyToOne
-    @JsonIgnoreProperties("reviews")
+    @JsonIgnoreProperties({"reviews", "venue", "type", "date","time","rating","ticketRequired","image","images","eventDescription"})
     Event event;
 
     @ManyToOne
-    @JsonIgnoreProperties({"reviews", "events","image","facebook","instagram","twitter","website"})
+    @JsonIgnoreProperties({"reviews", "events","image","facebook","instagram","twitter","website", "address"})
     Venue venue;
 
     @Column
     private String date;
-
 
     @Column
     private String reviewContent;
 
     @Column
     private double rating;
-
-    @Column
-    private double reviewRating = 6.0;
 
     public Review() {
     }
@@ -89,14 +85,6 @@ public class Review {
 
     public void setReviewContent(String reviewContent) {
         this.reviewContent = reviewContent;
-    }
-
-    public double getReviewRating() {
-        return reviewRating;
-    }
-
-    public void setReviewRating(double reviewRating) {
-        this.reviewRating = reviewRating;
     }
 
     public double getRating() {

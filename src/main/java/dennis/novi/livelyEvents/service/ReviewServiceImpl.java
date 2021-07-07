@@ -46,14 +46,14 @@ public class ReviewServiceImpl implements ReviewService{
         if (!reviewRepository.existsById(id)) throw new RecordNotFoundException();
         Review review = reviewRepository.findById(id).get();
         review.setReviewContent(newReview.getReviewContent());
-        review.setReviewRating(newReview.getReviewRating());
+        review.setRating(newReview.getRating());
         reviewRepository.save(review);
     }
     @Override
     public void updateReviewRating(Long id, Review newReview) {
         if (!reviewRepository.existsById(id)) throw new RecordNotFoundException();
         Review review = reviewRepository.findById(id).get();
-        review.setReviewRating(newReview.getReviewRating());
+        review.setRating(newReview.getRating());
         review.setReviewContent(review.getReviewContent());
         review.setEvent(review.getEvent());
         review.setVenue(review.getVenue());

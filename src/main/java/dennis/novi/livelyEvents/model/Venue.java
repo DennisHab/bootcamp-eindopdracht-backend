@@ -3,8 +3,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.jetbrains.annotations.Range;
 import javax.persistence.*;
-import java.io.File;
-import java.nio.file.Path;
 import java.util.List;
 
 @Entity
@@ -67,7 +65,6 @@ public class Venue {
         this.reviews = reviews;
         this.address = address;
         this.image = image;
-
     }
 
     public String getFacebook() {

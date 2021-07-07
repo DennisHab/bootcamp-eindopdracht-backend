@@ -1,20 +1,31 @@
 package dennis.novi.livelyEvents.service;
 
 import dennis.novi.livelyEvents.exception.BadRequestException;
+import dennis.novi.livelyEvents.exception.FileStorageException;
+import dennis.novi.livelyEvents.exception.NotAuthorizedException;
 import dennis.novi.livelyEvents.exception.RecordNotFoundException;
 import dennis.novi.livelyEvents.model.*;
 import dennis.novi.livelyEvents.repository.UserOwnerRepository;
 import dennis.novi.livelyEvents.repository.VenueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class VenueServiceImpl implements VenueService {
-
+    @Value("${app.upload.dir:${C:\\Users\\DennisHabets\\WebstormProjects\\novi-eindopdracht-lively\\public}}")
+    public String uploadDir;
     @Autowired
     VenueRepository venueRepository;
     @Autowired
@@ -129,4 +140,26 @@ public class VenueServiceImpl implements VenueService {
             throw new RecordNotFoundException("Either the user doesn't exist or the venue already has an owner");
         }
         return venue;
-    }}
+    }
+    @Override
+    public void uploadImageToVenue(MultipartFile file, Long id, String username) {
+        UserOwner userOwner = userOwnerRepository.findById(username).get();
+        List<Venue> userVenues = userOwner.getVenueList();
+        List<Long> userVenueIds = new ArrayList<>();
+        userVenues.forEach(venue -> userVenueIds.add(venue.getId()));
+        if(userVenueIds.contains(id)){
+            try {
+                Path copyLocation = Paths
+                        .get(uploadDir +  File.separator + StringUtils.cleanPath("venue" + id + file.getOriginalFilename()));
+                Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+                Venue venue = venueRepository.findById(id).get();
+                venue.setImage("venue" + id + file.getOriginalFilename());
+                venueRepository.save(venue);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new FileStorageException("Could not store file " + file.getOriginalFilename()
+                        + ". Please try again!");
+            }} else throw new NotAuthorizedException("This venue is not yours");
+    }
+}
